@@ -1,0 +1,9 @@
+[package]
+name = "ebrain"
+version = "0.1.0"
+authors = ["LuisKeys <luis.paradela@gmail.com>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ffmpeg = { version = "0.3.0", features = ["build"] }
