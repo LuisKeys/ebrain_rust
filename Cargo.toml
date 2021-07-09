@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 ffmpeg-next = { version = "4.4.0", features = ["build"] }
+winit = "0.25.0"

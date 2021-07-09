@@ -1,9 +1,12 @@
+mod io_util;
+mod ui_util;
+
 extern crate ffmpeg_next as ffmpeg;
-mod io_utils;
 use ffmpeg::util::frame::video::Video;
 
 pub fn run() {
-  io_utils::video_util::read_video(&process_frame);
+  //ui_util::win_util::create_window();
+  io_util::video_util::read_video(&process_frame).unwrap();  
 }
 
 pub fn process_frame(frame: &Video, frame_index: i32) {
