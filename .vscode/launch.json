@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'ebrain'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=ebrain",
+                    "--package=ebrain"
+                ],
+                "filter": {
+                    "name": "ebrain",
+                    "kind": "bin"
+                }
+            },
+            "args": ["test.mp4"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'ebrain'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=ebrain",
+                    "--package=ebrain"
+                ],
+                "filter": {
+                    "name": "ebrain",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
