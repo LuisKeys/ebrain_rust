@@ -1,6 +1,6 @@
 mod eb_core;
 
 fn main() {
-    println!("Ebrain process started...");
+    println!("eBrain process started...");
     eb_core::run();
 }

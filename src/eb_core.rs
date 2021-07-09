@@ -1,12 +1,19 @@
+extern crate ffmpeg_next as ffmpeg;
+
 mod io_util;
 mod ui_util;
 
-extern crate ffmpeg_next as ffmpeg;
 use ffmpeg::util::frame::video::Video;
+use std::thread;
 
 pub fn run() {
-  //ui_util::win_util::create_window();
-  io_util::video_util::read_video(&process_frame).unwrap();  
+  
+
+  thread::spawn(|| {
+    io_util::video_util::read_video(&process_frame).unwrap();    
+  });
+  
+  ui_util::win_util::create_window();
 }
 
 pub fn process_frame(frame: &Video, frame_index: i32) {
