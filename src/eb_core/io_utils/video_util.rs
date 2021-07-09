@@ -8,7 +8,7 @@ use std::env;
 use std::fs::File;
 use std::io::prelude::*;
 
-pub fn read_video() -> Result<(), ffmpeg::Error> {
+pub fn read_video(process_func: &dyn Fn(&Video, i32)) -> Result<(), ffmpeg::Error> {
     ffmpeg::init().unwrap();
 
     if let Ok(mut ictx) = input(&env::args().nth(1).expect("Cannot open file.")) {
@@ -38,7 +38,8 @@ pub fn read_video() -> Result<(), ffmpeg::Error> {
                 while decoder.receive_frame(&mut decoded).is_ok() {
                     let mut rgb_frame = Video::empty();
                     scaler.run(&decoded, &mut rgb_frame)?;
-                    save_file(&rgb_frame, frame_index).unwrap();
+                    process_func(&rgb_frame, frame_index);
+                    //save_frame(&rgb_frame, frame_index).unwrap();
                     frame_index += 1;
                 }
                 Ok(())
@@ -57,9 +58,10 @@ pub fn read_video() -> Result<(), ffmpeg::Error> {
     Ok(())
 }
 
-fn save_file(frame: &Video, index: usize) -> std::result::Result<(), std::io::Error> {
-    //let mut file = File::create(format!("frame{}.ppm", index))?;
-    //file.write_all(format!("P6\n{} {}\n255\n", frame.width(), frame.height()).as_bytes())?;
-    //file.write_all(frame.data(0))?;
+fn save_frame(frame: &Video, index: usize) -> std::result::Result<(), std::io::Error> {
+    let mut file = File::create(format!("frame{}.ppm", index))?;
+    file.write_all(format!("P6\n{} {}\n255\n", frame.width(), frame.height()).as_bytes())?;
+    file.write_all(frame.data(0))?;
+    println!("Frame index={}", index);
     Ok(())
 }
