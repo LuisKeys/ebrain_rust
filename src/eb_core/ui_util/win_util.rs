@@ -1,18 +1,25 @@
 extern crate sdl2;
-use std::path::Path;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::rect::Point;
+use sdl2::pixels::PixelFormatEnum;
 use sdl2::rect::Rect;
 use std::time::Duration;
 
+
 pub fn create_window() -> Result<(), String> {
+
+    const WINDOW_WITDH: u32 = 900;
+    const WINDOW_HEIGHT: u32 = 600;
+    const IMAGE_WITDH: u32 = 300;
+    const IMAGE_HEIGHT: u32 = 300;
+    const BUFFER_SIZE: usize = 360000;
+    const PIXEL_BYTES: u32 = 3;
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
 
     let window = video_subsystem
-        .window("SDL2", 1280, 720)
+        .window("SDL2", WINDOW_WITDH, WINDOW_HEIGHT)
         .position_centered()
         .build()
         .map_err(|e| e.to_string())?;
@@ -28,18 +35,24 @@ pub fn create_window() -> Result<(), String> {
 
     let mut event_pump = sdl_context.event_pump()?;
 
-    let temp_surface = sdl2::surface::Surface::load_bmp(Path::new("characters.bmp"))?;
+    let pixel_format = PixelFormatEnum::RGB888;
+    
+    let mut pixels: [u8; BUFFER_SIZE] = [0; BUFFER_SIZE];
+    let mut index = 0;
+    for index in (0..=BUFFER_SIZE-4).step_by(4) {
+        pixels[index] = 0;
+        pixels[index+1] = 55;
+        pixels[index+2] = 0;
+        //pixels[index+3] = 0;
+    }
+    let pitch = pixel_format.byte_size_of_pixels(IMAGE_WITDH as usize);
+    let surf = sdl2::surface::Surface::from_data(&mut pixels, IMAGE_WITDH, IMAGE_HEIGHT, pitch as u32, pixel_format).unwrap();    
     let texture = texture_creator
-        .create_texture_from_surface(&temp_surface)
+        .create_texture_from_surface(&surf)
         .map_err(|e| e.to_string())?;
 
-    let frames_per_anim = 4;
-    let sprite_tile_size = (32, 32);
-
-    // Baby - walk animation
-    let mut source_rect_0 = Rect::new(0, 0, sprite_tile_size.0, sprite_tile_size.0);
-    let mut dest_rect_0 = Rect::new(0, 0, sprite_tile_size.0 * 4, sprite_tile_size.0 * 4);
-    dest_rect_0.center_on(Point::new(-64, 120));
+        let mut source_rect = Rect::new(0, 0, IMAGE_WITDH, IMAGE_HEIGHT);
+    let mut dest_rect = Rect::new(0, 0, IMAGE_WITDH, IMAGE_HEIGHT);
 
     let mut running = true;
     while running {
@@ -56,20 +69,8 @@ pub fn create_window() -> Result<(), String> {
             }
         }
 
-        source_rect_0.set_x(100);
-        dest_rect_0.set_x(100);
-
         canvas.clear();
-        canvas.copy_ex(
-            &texture,
-            Some(source_rect_0),
-            Some(dest_rect_0),
-            0.0,
-            None,
-            false,
-            false,
-        )?;
- 
+        canvas.copy(&texture, Some(source_rect), Some(dest_rect))?; 
         canvas.present();
 
         std::thread::sleep(Duration::from_millis(100));

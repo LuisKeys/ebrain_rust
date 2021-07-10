@@ -13,7 +13,7 @@ pub fn run() {
     io_util::video_util::read_video(&process_frame).unwrap();    
   });
   
-  ui_util::win_util::create_window();
+  ui_util::win_util::create_window().unwrap();
 }
 
 pub fn process_frame(frame: &Video, frame_index: i32) {
